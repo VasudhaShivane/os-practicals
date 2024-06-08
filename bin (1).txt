@@ -1,0 +1,993 @@
+//addition
+echo Enter Two numbers
+read a b
+c=`expr $a + $b`
+echo Addition=$c
+#((c=$a+$b))
+
+//prime no
+echo Enter the number
+read n
+m=`expr $n / 2`
+echo $m
+i=2
+flag=0
+while [ $i -le $m ]
+do
+	rem=`expr $n % $i`
+	if [ $rem -eq 0 ]
+	then
+		flag=1
+	fi
+	i=`expr $i + 1`
+done
+if [ $flag -eq 1 -o $n -eq 1 ]
+then
+	echo $n is not a prime number
+else
+	echo $n is prime number
+fi
+
+//student data
+clear
+while [ 1 ]
+do
+	echo 1.Create 2.Display 3.Insert 4.Search 5.Modify 6.Delete 7.Exit
+	echo "Enter Choice=\c"
+	read ch
+	case $ch in
+		1)
+			echo -n "Enter File name:"
+			read fname
+			if [ -e $fname ]
+			then
+				echo "File Already Exists"
+			else
+				>> $fname
+				echo "File Created Successfully"
+			fi
+			;;
+		2)
+			echo -n "Enter File name:"
+			read fname
+			if [ -e $fname ]
+			then
+				echo "The Content of File:"
+				sort -n $fname
+			else
+				echo "File doesn't exist"
+			fi
+			;;
+		3)
+			echo -n "Enter File namee:"
+			read fname
+			if [ -e $fname ]
+			then
+				echo -n "Enter the roll number:"
+				read roll
+				grep -w "$roll" $fname
+				ans=$?
+				echo answer=$ans
+				if [ $ans -eq 0 ]
+				then
+					echo "Record Already Present"
+					else
+						echo -n "Enter Name:"
+						read name
+						echo $roll $name >> $fname
+						echo "Record Inserted Successfully"
+				fi
+			else
+				echo "File doesn't exist"
+			fi
+			;;
+		4)
+			echo -n "Enter File name:"
+			read fname
+			if [ -e $fname ]
+			then
+				echo -n "Enter the Roll no:"
+				read roll
+				grep -w "$roll" $fname
+				ans=$?
+				if [ $ans -eq 0 ]
+				then
+					echo "Record Found"
+				else
+					echo "Record not found"
+				fi
+			else
+				echo "File Not exist"
+			fi
+			;;
+		5)
+			echo -n "Enter file name"
+			read fname
+			if [ -e $fname ]
+			then
+				echo -n "Enter roll no: "
+				read roll
+				grep -w "$roll" $fname
+				ans=$?
+				if [ $ans -eq 0 ]
+				then
+					echo -n "Enter New Roll no && New Name:"
+					read nroll nname
+					grep -w "$nroll" $fname
+					ans=$?
+					if [ $ans -eq 0 ]
+					then
+						echo Record already found please try another no.
+					else
+						grep -v "$roll" $fname >> temp
+						echo "$nroll $nname" >> temp
+						rm $fname
+						cp temp $fname
+						rm temp
+						echo "Record Successfully modified"
+					fi
+				else
+					echo "Record Not present"
+				fi
+			else
+				echo "File doesn't exit"
+			fi
+			;;
+		6)
+			echo -n "Enter file name"
+                        read fname
+                        if [ -e $fname ]
+                        then
+                                echo -n "Enter roll no: "
+                                read roll
+                                grep -w "$roll" $fname
+                                ans=$?
+                                if [ $ans -eq 0 ]
+                                then
+					grep -v "$roll" $fname >> temp
+                                        rm $fname
+                                        cp temp $fname
+                                        rm temp
+                                        echo "Record Successfully deleted"
+                                else
+                                        echo "Record Not present"
+                                fi
+                        else
+                                echo "File doesn't exit"
+                        fi
+                        ;;
+
+		7)
+			exit
+			;;
+		*)
+			echo "Enter Valid Choice"
+	esac
+done
+
+//process creation
+#include<stdio.h>
+#include<sys/types.h>
+#include<ctype.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<sys/wait.h>
+
+void asc(int*,int);
+
+void dsc(int*,int);
+
+int main()
+{
+	int *a,n,i;
+	pid_t pid;
+	printf("\nEnter the no of array elements : ");
+	scanf("%d",&n);
+	a=(int*)malloc(n*sizeof(int));
+	printf("\nEnter the array elements : ");
+	for(i=0;i<n;i++)
+	{
+		printf("\na[%d] : ",i);
+		scanf("%d",&a[i]);
+	}
+	printf("\n");
+
+	pid=fork();
+
+	if(pid<0)
+	{
+		perror("Fork Error\n");
+	}
+	else if(pid==0)
+	{
+		
+		printf("Child process id: %d \n",getpid());
+		printf("MY parents id is : %d",getppid());
+	}
+	else
+	{
+		wait(NULL);
+		printf("Parent process id: %d",getpid());
+	}
+	
+	switch(pid)
+	{
+		case -1:
+			printf("\nFork error\n");
+
+			exit(-1);
+		case 0:
+			printf("\nChild executes...\n");
+			asc(a,n);
+			exit(pid);
+			
+		default:
+			printf("\nParent executed...");
+
+			dsc(a,n);
+			system("ps -elf");
+			exit(pid);
+	}
+}
+
+void asc(int *a,int n)
+{
+	int i,j,temp;
+	for(i=0;i<n;i++)
+		for(j=i+1;j<n;j++)
+			if(a[i]>a[j])
+			{
+				temp=a[i];
+				a[i]=a[j];
+				a[j]=temp;
+			}
+	printf("\nArray in ascending order is : \n");
+	for(i=0;i<n;i++)
+		printf(" %d ",a[i]);
+	printf("\n");
+}
+
+void dsc(int *a,int n)
+{
+        int i,j,temp;
+        for(i=0;i<n;i++)
+                for(j=i+1;j<n;j++)
+                        if(a[j]>a[i])
+                        {
+                                temp=a[i];
+                                a[i]=a[j];
+                                a[j]=temp;
+                        }
+        printf("\nArray in ascending order is : \n");
+        for(i=0;i<n;i++)
+                printf(" %d ",a[i]);
+        printf("\n");
+}
+
+
+//fcfs(non premptive)
+#include<stdio.h>
+
+struct proc
+{
+	int proc;
+	int at;
+	int st;
+	int wt;
+	int tat;
+};
+
+void sort();
+void calculation();
+
+struct proc p[20];
+
+int n,temp,a,b;
+
+void main()
+{
+	int i;
+	printf("\nEnter total no. of processes : ");
+	scanf("%d",&n);
+	printf("\nEnter proc no. Arival time & Burst time \n");
+	for(i=0;i<n;i++)
+	{
+		scanf("%d%d%d",&p[i].proc,&p[i].at,&p[i].st);
+	}
+
+	printf("Process\t AT\t BT\t\n");
+	for(i=0;i<n;i++)
+	{
+		printf(" P%d\t %d \t %d",p[i].proc,p[i].at,p[i].st);
+		printf("\n");
+	}
+	
+	sort();
+	calculation();
+}
+
+void sort()
+{
+	int i,j;
+	struct proc temp;
+	for(i=0;i<n-1;i++)
+	{
+		for(j=0;j<n-1;j++)
+		{
+			if(p[j].at > p[j+1].at)
+			{
+				temp=p[j];
+				p[j]=p[j+1];
+				p[j+1]=temp;
+			}
+		}
+	}
+
+	printf("Process in ascending order of Arival Time\n");
+	printf("Process\t AT\t BT\t\n");
+	for(i=0;i<n;i++)
+	{
+		printf("P%d\t %d\t %d",p[i].proc,p[i].at,p[i].st);
+		printf("\n");
+	}
+}
+
+void calculation()
+{
+	int i,j;
+	float atat,awt;
+	float a=0;
+	float b=0;
+	p[0].tat=p[0].at+p[0].st;
+	for(i=1;i<n;i++)
+	{
+		if(p[i-1].tat>=p[i].at)
+			p[i].tat=p[i-1].tat+p[i].st;
+		else
+			p[i].tat=p[i].at+p[i].st;
+	}
+	for(i=0;i<n;i++)
+	{
+		p[i].tat=p[i].tat-p[i].at;
+		p[i].wt=p[i].tat-p[i].st;
+		a=a+p[i].tat;
+		b=b+p[i].wt;
+	}
+	printf("Process\t AT\t BT\tTAT\tWT\n");
+	for(i=0;i<n;i++)
+	{
+		printf(" P%d\t %d \t %d \t %d \t %d",p[i].proc,p[i].at,p[i].st,p[i].tat,p[i].wt);
+		printf("\n");
+	}
+	atat=a/n;
+	awt=b/n;
+	printf("Average waiting time %f Average Waiting time=%f\n",atat,awt);
+}
+
+//round robin(preemptive)
+#include<stdio.h>
+ 
+int main()
+{
+ 
+  int cnt,j,n,t,remain,flag=0,tq;
+  int wt=0,tat=0,at[10],bt[10],rt[10];
+  printf("Enter Total Process:\t ");
+  scanf("%d",&n);
+  remain=n;
+  for(cnt=0;cnt<n;cnt++)
+  {
+    printf("Enter Arrival Time and Burst Time for Process Process Number %d :",cnt+1);
+    scanf("%d",&at[cnt]);
+    scanf("%d",&bt[cnt]);
+    rt[cnt]=bt[cnt];
+  }
+  printf("Enter Time Quantum:\t");
+  scanf("%d",&tq);
+  printf("\n\nProcess\t|Turnaround Time|Waiting Time\n\n");
+  for(t=0,cnt=0;remain!=0;)
+  {
+    if(rt[cnt]<=tq && rt[cnt]>0)
+    {
+      t+=rt[cnt];
+      rt[cnt]=0;
+      flag=1;
+    }
+    else if(rt[cnt]>0)
+    {
+      rt[cnt]-=tq;
+      t+=tq;
+    }
+    if(rt[cnt]==0 && flag==1)
+    {
+      remain--;
+      printf("P[%d]\t|\t%d\t|\t%d\n",cnt+1,t-at[cnt],t-at[cnt]-bt[cnt]);
+      wt+=t-at[cnt]-bt[cnt];
+      tat+=t-at[cnt];
+      flag=0;
+    }
+    if(cnt==n-1)
+      cnt=0;
+    else if(at[cnt+1]<=t)
+      cnt++;
+    else
+      cnt=0;
+  }
+  printf("\nAverage Waiting Time= %f\n",wt*1.0/n);
+  printf("Avg Turnaround Time = %f\n",tat*1.0/n);
+  
+  return 0;
+}
+
+//SJF
+#include <stdio.h> 
+ #include <stdlib.h> 
+  
+ struct process { 
+         int process_number; 
+         int arrival_time; 
+         int burst_time; 
+         int completion_time; 
+         int turn_around_time; 
+         int wait_time; 
+ }; 
+  
+ int comparator(const void* process_1, const void* process_2) { 
+         struct process* a = (struct process*) process_1; 
+         struct process* b = (struct process*) process_2; 
+         return (a -> arrival_time > b -> arrival_time) ? 1 : (a -> arrival_time == b -> arrival_time) ? 0 : -1; 
+ }         
+  
+ void show_schedule(struct process sch[], int n) { 
+         printf("------------------------------------------------------------------------------------\n"); 
+         printf("process_num\tAT\t\tBT\t\tCT\t\tTAT\t\tWT\n"); 
+         printf("------------------------------------------------------------------------------------\n"); 
+         for(int i = 0; i < n; i++) { 
+                 printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n", sch[i].process_number, sch[i].arrival_time, sch[i].burst_time, sch[i].completion_time, sch[i].turn_around_time, sch[i].wait_time); 
+         }         
+         printf("------------------------------------------------------------------------------------\n"); 
+ } 
+ int main() { 
+         printf("Enter number of process to schedule :"); 
+         int n; scanf("%d", &n); 
+  
+         struct process schedule[n]; 
+         for(int i = 0; i < n; i++) { 
+                 printf("---------------------------\n"); 
+                 printf("Enter process number :"); scanf("%d", &schedule[i].process_number); 
+                 printf("Enter arrival time :"); scanf("%d", &schedule[i].arrival_time); 
+                 printf("Enter burst time :"); scanf("%d", &schedule[i].burst_time); 
+                 schedule[i].completion_time = 0; 
+                 schedule[i].turn_around_time = 0; 
+                 schedule[i].wait_time = 0; 
+         } 
+         show_schedule(schedule, n); 
+         qsort(schedule, n, sizeof(struct process), comparator); 
+         show_schedule(schedule, n); 
+         schedule[0].completion_time = schedule[0].arrival_time + schedule[0].burst_time; 
+         schedule[0].turn_around_time = schedule[0].completion_time - schedule[0].arrival_time; 
+         schedule[0].wait_time = schedule[0].turn_around_time - schedule[0].burst_time; 
+         int time = schedule[0].completion_time; 
+         for(int i = 1; i < n; i++) { 
+                 time = time + schedule[i].burst_time; 
+                 schedule[i].completion_time = time; 
+                 schedule[i].turn_around_time = schedule[i].completion_time - schedule[i].arrival_time; 
+                 schedule[i].wait_time = schedule[i].turn_around_time - schedule[i].burst_time; 
+         } 
+         show_schedule(schedule, n); 
+         double avg_TAT = 0; 
+         double avg_WT = 0; 
+         for(int i = 0; i < n; i++) { 
+                 avg_TAT = avg_TAT + schedule[i].turn_around_time; 
+                 avg_WT = avg_WT + schedule[i].wait_time; 
+         } 
+         printf("Average wait time : %.2f\n", (avg_WT / n)); 
+         printf("Average turn around time : %.2f\n", (avg_TAT / n)); 
+         return 0; 
+ }
+
+//Reader-writer
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h> 
+#include <stdint.h>
+#include <unistd.h>
+ 
+
+#define R 5
+#define W 5
+int readcount;
+int writecount;
+//sem_t x;
+sem_t y,z;			
+pthread_mutex_t x;		
+sem_t wsem,rsem;	//mutual exclusion	
+int s=5;
+void *reader1(void *a);
+void *writer1(void *a);
+void *reader2(void *a);
+void *writer2(void *a);
+int main()
+{
+	int i,op;
+	
+	pthread_t thread_read[R],thread_write[W];
+	//sem_init(&x,0,1); 
+	  pthread_mutex_init(&x,NULL);	//initializeed to default value
+    	sem_init(&wsem,0,1);
+    	sem_init(&y,0,1); 
+    	sem_init(&rsem,0,1);
+    	sem_init(&z,0,1); 
+    
+    	
+	
+	
+	
+    	do{
+	    	printf("Menu : 1. Readers have priority 2. Writers have priority 3.exit ");
+	    	scanf("%d",&op);
+	    	switch(op)
+	    	{
+	    		case 1:readcount=0;
+	    			for(i=0;i<W;i++)
+				{
+					pthread_create(&thread_write[i],NULL, *writer1,(void *) (intptr_t) i);
+				}
+				for(i=0;i<R;i++)
+				{
+					pthread_create(&thread_read[i],NULL, *reader1,(void *) (intptr_t) i);
+				}
+				for(i=0;i<W;i++)
+				{
+					pthread_join(thread_write[i],NULL);
+				}
+				for(i=0;i<R;i++)
+				{
+					pthread_join(thread_read[i],NULL);
+				}
+	    			break;
+	    		case 2:readcount=0;
+	    			writecount = 0;
+	    			for(i=0;i<W;i++)
+				{
+					pthread_create(&thread_write[i],NULL, *writer2,(void *) (intptr_t) i);
+				}
+				for(i=0;i<R;i++)
+				{
+					pthread_create(&thread_read[i],NULL, *reader2,(void *) (intptr_t) i);
+				}
+				for(i=0;i<W;i++)
+				{
+					pthread_join(thread_write[i],NULL);
+				}
+				for(i=0;i<R;i++)
+				{
+					pthread_join(thread_read[i],NULL);
+				}
+	    			break;
+	    			
+	    		case 3: break;
+	    	}
+	    	
+    	}while(op!=3);
+}
+
+void *reader1(void *a)
+{
+	//int r=(int)a;
+	int r = (intptr_t) a;
+	int i=0;
+	while (i<5){
+		//sleep(rand() % 10);
+		//sem_wait(&x);
+		pthread_mutex_lock(&x);
+		readcount++;
+		if(readcount == 1)
+		sem_wait(&wsem);
+		//sem_post(&x);
+		pthread_mutex_unlock(&x);
+		printf("\t\tReader %d is reading : %d \n",r,s);
+		//sem_wait(&x);
+		pthread_mutex_lock(&x);
+		readcount--;
+		if(readcount == 0)
+		sem_post(&wsem);
+		//sem_post(&x);
+		pthread_mutex_unlock(&x);
+		sleep(rand() % 10);
+		i++;
+	}
+}
+
+void *writer1(void *a)
+{
+	int w = (intptr_t) a;
+	//int w=(int)a;
+	int i=0;
+	while (i<2){
+	//sleep(rand() % 10);
+	sem_wait(&wsem);
+	s+=5;
+	printf("Writer %d is writing : %d \n",w,s);
+	sem_post(&wsem);
+	sleep(rand() % 10);
+	i++;
+	}
+}
+
+void *reader2(void *a)
+{
+	int r = (intptr_t) a;
+	int i=0;
+	//int r=(int)a;
+	while (i<5){
+		sem_wait(&z);
+		sem_wait(&rsem);
+		pthread_mutex_lock(&x);
+		//sem_wait(&x);
+		readcount++;
+		if (readcount == 1)
+		sem_wait (&wsem);
+		pthread_mutex_unlock(&x);
+		//sem_post(&x);
+		sem_post(&rsem);
+		sem_post(&z);
+		printf("\t\tReader %d is reading : %d \n",r,s);
+		//sem_wait(&x);
+		pthread_mutex_lock(&x);
+		readcount--;
+		if (readcount == 0) 
+			sem_post(&wsem);
+		//sem_post(&x);
+		pthread_mutex_unlock(&x);
+		sleep(rand() % 10);
+		i++;
+	}
+}
+void *writer2(void *a)
+{
+	int w = (intptr_t) a;
+	int i=0;
+	//int w=(int)a;
+	while (i<2){
+		sem_wait(&y);
+		writecount++;
+		if (writecount == 1)
+		sem_wait(&rsem);
+		sem_post(&y);
+		sem_wait(&wsem);
+		s+=10;
+		printf("Writer %d is writing : %d \n",w,s);
+		sem_post(&wsem);
+		sem_wait(&y);
+		writecount--;
+		if (writecount == 0) 
+			sem_post(&rsem);
+		sem_post(&y);
+		sleep(rand() % 10);
+		i++;
+	}
+}
+
+//full duplex communicattion between 2 process
+//Process 1
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<string.h>
+#include<fcntl.h>
+#include<sys/stat.h>
+#include<unistd.h>
+
+
+#define FIFO_NAME1 "comm_pipe1"
+#define FIFO_NAME2 "comm_pipe2"
+
+int main()
+
+{
+
+	char s1[300],s2[300];
+	int num,fd1,fd2,byt;
+	
+	mknod(FIFO_NAME1, S_IFIFO | 0666, 0);
+	mknod(FIFO_NAME2, S_IFIFO | 0666, 0);
+	
+	printf("Waiting for consumer....\n");
+	
+	fd1=open(FIFO_NAME1, O_WRONLY);
+	fd2=open(FIFO_NAME2, O_RDONLY);
+	printf("got a customer --type some stuff\n");
+	
+	gets(s1);
+	if((num = write(fd1,s1,strlen(s1)))==-1)
+		perror("Error");
+	else
+	{
+		printf("Spoke : wrote %d bytes to file1\n",num);
+		
+		byt=read(fd2,s2,300);
+		s2[byt]='\0';
+		printf(" %s\n",s2);
+	
+	}
+	
+	close(fd1);
+	close(fd2);
+
+
+return 0;
+}
+
+//Process 2
+#include<stdio.h>
+#include<stdlib.h>
+#include<errno.h>
+#include<string.h>
+#include<fcntl.h>
+#include<sys/stat.h>
+#include<unistd.h>
+
+
+#define FIFO_NAME1 "comm_pipe1"
+#define FIFO_NAME2 "comm_pipe2"
+
+int main()
+
+{
+	char s[300],vowel[20],send[200];
+	int num,fd1,fd2,sig,k=0,i,wordcnt=1,charcnt=0,linecnt=0;
+
+	mknod(FIFO_NAME1, S_IFIFO | 0666, 0);
+	mknod(FIFO_NAME2, S_IFIFO | 0666, 0);
+	printf("Waiting for producer....\n");
+	fd1=open(FIFO_NAME1, O_RDONLY);
+	fd2=open(FIFO_NAME2, O_WRONLY);
+ 
+ 	printf("got a producer\n");
+ 	
+ 	if((num=read(fd1,s,300))==-1)
+		perror("error");
+	else
+	{
+		s[num]= '\0';
+		printf("tick: read %d bytes: %s\n",num,s);
+		k=0;
+		vowel[0]='\0';
+		wordcnt=1;
+		for(i=0;i<num;i++)
+		{
+			if(s[i]=='a' || s[i]=='e' || s[i]=='i' || s[i]=='o' || s[i]=='u')
+			{
+				vowel[k]=s[i];
+				k++;
+			}
+			if(s[i]=='.'&&(s[i+1]==' '||s[i+1]=='\0'))
+				linecnt++;
+			else if(s[i]!='.'&&s[i]!=' ')
+				charcnt++;
+		}
+		
+		vowel[k]='\0';
+		sprintf(send,"for the given sentence the word count is %d\n vowel count is %d\n charachter count is %d\n  lines are %d\n",wordcnt,k,charcnt,linecnt);
+
+		if((sig==write(fd2,send,strlen(send)))!=-1)
+			printf("\nwritten successfully to the file 2");
+		else
+			printf("\nerror in writng in file 2");	
+
+
+	}
+
+	close(fd1);
+	close(fd2);
+
+
+
+return 0;
+}
+
+
+//Page replacement
+//FIFO
+#include<stdio.h> 
+int main()  
+{
+    int incomingStream[] = {7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1};
+    int pageFaults = 0;  
+    int frames = 3;  
+    int m, n, s, pages;   
+    pages = sizeof(incomingStream)/sizeof(incomingStream[0]);   
+    printf("Incoming \t\t Frame 1 \t\t Frame 2 \t\t Frame 3 ");  
+    int temp[ frames ];  
+    for(m = 0; m < frames; m++)  
+    {  
+        temp[m] = -1;  
+    }  
+    for(m = 0; m < pages; m++)  
+    {  
+        s = 0;   
+        for(n = 0; n < frames; n++)  
+        {  
+            if(incomingStream[m] == temp[n])  
+            {  
+                s++;  
+                pageFaults--;  
+            }  
+        }  
+        pageFaults++;  
+        if((pageFaults <= frames) && (s == 1))  
+        {  
+            temp[m] = incomingStream[m];  
+        }  
+        else if(s == 0)  
+        {  
+            temp[(pageFaults - 1) % frames] = incomingStream[m];  
+        }  
+        printf("\n");  
+        printf("%d\t\t\t",incomingStream[m]);  
+        for(n = 0; n < frames; n++)  
+        {  
+            if(temp[n] != -1)  
+                printf(" %d\t\t\t", temp[n]);  
+            else  
+                printf(" - \t\t\t");  
+        }  
+    }  
+    printf("\nTotal Page Faults: %d\n", pageFaults);
+    int h;
+    h = pages - pageFaults; 
+    printf("\nTotal Page hit: %d\n",h);
+    float ffreq = (float)pageFaults / pages * 100;
+    printf("Page fault frequency : %.2f%% \n",ffreq);
+    float hfreq = (float)h / pages * 100;
+    printf("Page hit frequency : %.2f%% \n",hfreq);
+    return 0;  
+} 
+
+//LRU 1
+#include<stdio.h>
+#include<limits.h>
+
+int checkHit(int incomingPage, int queue[], int occupied){
+    
+    for(int i = 0; i < occupied; i++){
+        if(incomingPage == queue[i])
+            return 1;
+    }
+    
+    return 0;
+}
+
+void printFrame(int queue[], int occupied)
+{
+    for(int i = 0; i < occupied; i++)
+        printf("%d\t\t\t",queue[i]);
+}
+
+int main()
+{
+
+//    int incomingStream[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2, 1};
+//    int incomingStream[] = {1, 2, 3, 2, 1, 5, 2, 1, 6, 2, 5, 6, 3, 1, 3, 6, 1, 2, 4, 3};
+    int incomingStream[] = {1, 2, 3, 2, 1, 5, 2, 1, 6, 2, 5, 6, 3, 1, 3};
+    
+    int n = sizeof(incomingStream)/sizeof(incomingStream[0]);
+    int frames = 3;
+    int queue[n];
+    int distance[n];
+    int occupied = 0;
+    int pagefault = 0;
+    
+    printf("Page\t Frame1 \t Frame2 \t Frame3\n");
+    
+    for(int i = 0;i < n; i++)
+    {
+        printf("%d:  \t\t",incomingStream[i]);
+        // what if currently in frame 7
+        // next item that appears also 7
+        // didnt write condition for HIT
+        
+        if(checkHit(incomingStream[i], queue, occupied)){
+            printFrame(queue, occupied);
+        }
+        
+        // filling when frame(s) is/are empty
+        else if(occupied < frames){
+            queue[occupied] = incomingStream[i];
+            pagefault++;
+            occupied++;
+            
+            printFrame(queue, occupied);
+        }
+        else{
+            
+            int max = INT_MIN;
+            int index;
+            // get LRU distance for each item in frame
+            for (int j = 0; j < frames; j++)
+            {
+                distance[j] = 0;
+                // traverse in reverse direction to find 
+                // at what distance  frame item occurred last 
+                for(int k = i - 1; k >= 0; k--)
+                {
+                    ++distance[j];
+
+                    if(queue[j] == incomingStream[k])
+                        break;
+                }
+                
+                // find frame item with max distance for LRU
+                // also notes the index of frame item in queue
+                // which appears furthest(max distance)
+                if(distance[j] > max){
+                    max = distance[j];
+                    index = j;
+                }
+            }
+            queue[index] = incomingStream[i];
+            printFrame(queue, occupied);
+            pagefault++;
+        }
+        
+        printf("\n");
+    }
+    
+    printf("Page Fault: %d",pagefault);
+    
+    return 0;
+}
+
+//Lru 2
+#include <stdio.h>
+
+#define MAX_FRAMES 4
+
+int main() {
+    int pages[] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2};
+    int num_pages = sizeof(pages) / sizeof(pages[0]);
+    int frames[MAX_FRAMES], counter[MAX_FRAMES], faults = 0, hits = 0;
+
+    for (int i = 0; i < MAX_FRAMES; ++i) {
+        frames[i] = -1;
+        counter[i] = 0;
+    }
+
+    for (int i = 0; i < num_pages; ++i) {
+        int currentPage = pages[i];
+        int pageFound = 0;
+
+        for (int j = 0; j < MAX_FRAMES; ++j) {
+            if (frames[j] == currentPage) {
+                hits++;
+                counter[j] = i + 1;
+                pageFound = 1;
+                break;
+            }
+        }
+
+        if (!pageFound) {
+            int leastUsed = 0;
+            for (int j = 1; j < MAX_FRAMES; ++j) {
+                if (counter[j] < counter[leastUsed]) {
+                    leastUsed = j;
+                }
+            }
+            frames[leastUsed] = currentPage;
+            counter[leastUsed] = i + 1;
+            faults++;
+        }
+
+        printf("\n");
+        for (int j = 0; j < MAX_FRAMES; ++j) {
+            printf("%d\t", frames[j]);
+        }
+    }
+
+    printf("\n\nTotal Page Hits: %d", hits);
+    printf("\nTotal Page Faults: %d\n", faults);
+
+    return 0;
+}
